@@ -25,13 +25,6 @@
                     <label class="field-label" for="effectInput">Effect</label>
                     <select id="effectInput"></select>
                 </div>
-                <div>
-                    <div class="field-row">
-                        <label for="durationInput">Duration</label>
-                        <span id="durationVal" class="field-val">2s</span>
-                    </div>
-                    <input id="durationInput" type="range" min="0.5" max="10" step="0.5" value="2" />
-                </div>
             </div>
 
             <div class="sidebar-group">
@@ -41,6 +34,13 @@
                         <span id="fontSizeVal" class="field-val">160px</span>
                     </div>
                     <input id="fontSizeInput" type="range" min="24" max="300" step="2" value="160" />
+                </div>
+                <div>
+                    <div class="field-row">
+                        <label for="letterSpacingInput">Letter Spacing</label>
+                        <span id="letterSpacingVal" class="field-val">0px</span>
+                    </div>
+                    <input id="letterSpacingInput" type="range" min="-20" max="100" step="1" value="0" />
                 </div>
                 <div>
                     <div class="field-row">
@@ -86,7 +86,6 @@
 
             <div class="preview-inner">
                 <div class="canvas-wrapper">
-                    <div class="canvas-badge">1920 × 1080</div>
                     <canvas id="canvas" width="1920" height="1080"></canvas>
 
                     <div id="exportOverlay">
@@ -110,11 +109,13 @@
                         <i id="playIcon" data-lucide="play" class="hidden"></i>
                         <i id="pauseIcon" data-lucide="pause"></i>
                     </button>
-                    <button id="resetBtn" class="ctrl-btn">
-                        <i data-lucide="rotate-ccw"></i>
-                    </button>
                     <div class="progress-wrap">
                         <input id="progressInput" type="range" min="0" max="1" step="0.001" value="0" />
+                    </div>
+                    <div class="duration-control">
+                        <i data-lucide="timer"></i>
+                        <input id="durationInput" type="range" min="0.5" max="10" step="0.5" value="2" />
+                        <span id="durationVal" class="field-val">2s</span>
                     </div>
                     <div class="time-display">
                         <i data-lucide="clock"></i>

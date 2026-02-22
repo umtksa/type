@@ -10,6 +10,7 @@ let state = {
     duration: 2,
     fps: 30,
     fontSize: 160,
+    letterSpacing: 0,
     lineSpacing: 1.2,
     textColor: '#ffffff',
     bgColor: '#09090b',
@@ -31,12 +32,13 @@ const els = {
     durationVal: document.getElementById('durationVal'),
     fontSize: document.getElementById('fontSizeInput'),
     fontSizeVal: document.getElementById('fontSizeVal'),
+    letterSpacing: document.getElementById('letterSpacingInput'),
+    letterSpacingVal: document.getElementById('letterSpacingVal'),
     lineSpacing: document.getElementById('lineSpacingInput'),
     lineSpacingVal: document.getElementById('lineSpacingVal'),
     playBtn: document.getElementById('playBtn'),
     playIcon: document.getElementById('playIcon'),
     pauseIcon: document.getElementById('pauseIcon'),
-    resetBtn: document.getElementById('resetBtn'),
     progress: document.getElementById('progressInput'),
     timeVal: document.getElementById('timeVal'),
     exportBtn: document.getElementById('exportBtn'),
@@ -64,7 +66,7 @@ function buildCharPositions(ctx, line) {
 }
 
 // renderFrame function
-const renderFrame = (ctx, progress, text, width, height, effect, fontSize, lineSpacing, textColor, bgColor, isTransparentBg, textAlign) => {
+const renderFrame = (ctx, progress, text, width, height, effect, fontSize, letterSpacing, lineSpacing, textColor, bgColor, isTransparentBg, textAlign) => {
     if (isTransparentBg) {
         ctx.clearRect(0, 0, width, height);
     } else {
@@ -73,8 +75,9 @@ const renderFrame = (ctx, progress, text, width, height, effect, fontSize, lineS
     }
 
     ctx.font = `bold ${fontSize}px "${state.fontFamily}", sans-serif`;
+    ctx.letterSpacing = `${letterSpacing}px`;
     ctx.textBaseline = 'middle';
-    ctx.textAlign = 'center'; // effects receive center x of each char
+    ctx.textAlign = 'center';
 
     const lines = text.split('\n');
     const lineHeight = fontSize * lineSpacing;
@@ -157,7 +160,7 @@ function animate(time) {
 
 function draw() {
     const ctx = els.canvas.getContext('2d');
-    renderFrame(ctx, state.progress, state.text, els.canvas.width, els.canvas.height, state.effect, state.fontSize, state.lineSpacing, state.textColor, state.bgColor, state.isTransparentBg, state.textAlign);
+    renderFrame(ctx, state.progress, state.text, els.canvas.width, els.canvas.height, state.effect, state.fontSize, state.letterSpacing, state.lineSpacing, state.textColor, state.bgColor, state.isTransparentBg, state.textAlign);
 }
 
 function updateUI() {
@@ -178,6 +181,7 @@ els.text.addEventListener('input', e => { state.text = e.target.value; draw(); }
 els.effect.addEventListener('change', e => { state.effect = e.target.value; draw(); });
 els.duration.addEventListener('input', e => { state.duration = Number(e.target.value); els.durationVal.textContent = state.duration + 's'; updateUI(); });
 els.fontSize.addEventListener('input', e => { state.fontSize = Number(e.target.value); els.fontSizeVal.textContent = state.fontSize + 'px'; draw(); });
+els.letterSpacing.addEventListener('input', e => { state.letterSpacing = Number(e.target.value); els.letterSpacingVal.textContent = state.letterSpacing + 'px'; draw(); });
 els.lineSpacing.addEventListener('input', e => { state.lineSpacing = Number(e.target.value); els.lineSpacingVal.textContent = state.lineSpacing.toFixed(2); draw(); });
 
 els.alignBtns.forEach(btn => {
@@ -211,7 +215,6 @@ els.fontFileInput.addEventListener('change', async (e) => {
 });
 
 els.playBtn.addEventListener('click', () => { state.isPlaying = !state.isPlaying; updateUI(); });
-els.resetBtn.addEventListener('click', () => { state.progress = 0; state.isPlaying = true; updateUI(); draw(); });
 els.progress.addEventListener('input', e => { state.progress = Number(e.target.value); state.isPlaying = false; updateUI(); draw(); });
 
 els.exportBtn.addEventListener('click', async () => {
@@ -232,7 +235,7 @@ els.exportBtn.addEventListener('click', async () => {
 
     for (let i = 0; i <= totalFrames; i++) {
         const t = i / totalFrames;
-        renderFrame(ctx, t, state.text, els.canvas.width, els.canvas.height, state.effect, state.fontSize, state.lineSpacing, state.textColor, state.bgColor, state.isTransparentBg, state.textAlign);
+        renderFrame(ctx, t, state.text, els.canvas.width, els.canvas.height, state.effect, state.fontSize, state.letterSpacing, state.lineSpacing, state.textColor, state.bgColor, state.isTransparentBg, state.textAlign);
         const dataUrl = els.canvas.toDataURL('image/png');
         const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
         zip.file(`${baseName} ${String(i).padStart(4, '0')}.png`, base64Data, {base64: true});
@@ -270,6 +273,7 @@ els.text.value = state.text;
 els.effect.value = state.effect;
 els.duration.value = state.duration;
 els.fontSize.value = state.fontSize;
+els.letterSpacing.value = state.letterSpacing;
 els.lineSpacing.value = state.lineSpacing;
 els.canvas.classList.add('transparent-bg');
 els.canvas.style.backgroundColor = '';
