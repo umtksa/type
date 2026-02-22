@@ -2,7 +2,7 @@ effects to copy
 - [ ] Data Stream
 
 todo
-- [ ] seperate each effects
+- [ ] seperate each effect
 - [ ] background shapes and animations
-- [ ] save states as json when saving
+- [ ] save states as json when exporting
 - [ ] load states for revisions
