@@ -1,0 +1,378 @@
+/* ── Reset & Base ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --zinc-950:  #09090b;
+    --zinc-900:  #18181b;
+    --zinc-800:  #27272a;
+    --zinc-700:  #3f3f46;
+    --zinc-500:  #71717a;
+    --zinc-400:  #a1a1aa;
+    --zinc-100:  #f4f4f5;
+    --emerald-600: #059669;
+    --emerald-500: #10b981;
+    --radius-lg: 0.5rem;
+    --radius-xl: 0.75rem;
+    --radius-full: 9999px;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    background-color: var(--zinc-950);
+    color: var(--zinc-100);
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Layout ───────────────────────────────────────────── */
+main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+/* ── Sidebar ──────────────────────────────────────────── */
+aside {
+    width: 320px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--zinc-800);
+    background-color: rgba(24, 24, 27, 0.3);
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.sidebar-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ── Form Controls ────────────────────────────────────── */
+label.field-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--zinc-400);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.field-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.field-row label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--zinc-400);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.field-val {
+    font-size: 0.75rem;
+    color: var(--zinc-500);
+    font-family: monospace;
+}
+
+textarea,
+select {
+    width: 100%;
+    background-color: var(--zinc-950);
+    border: 1px solid var(--zinc-800);
+    border-radius: var(--radius-lg);
+    padding: 0.75rem;
+    color: var(--zinc-100);
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+textarea {
+    resize: none;
+    height: 8rem;
+}
+
+select {
+    appearance: none;
+}
+
+textarea:focus,
+select:focus {
+    border-color: var(--emerald-500);
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: var(--emerald-500);
+    cursor: pointer;
+}
+
+/* progress range specific */
+#progressInput {
+    height: 6px;
+    background-color: var(--zinc-800);
+    border-radius: var(--radius-full);
+    appearance: none;
+}
+
+/* ── Export Button ────────────────────────────────────── */
+.sidebar-export {
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+#exportBtn {
+    width: 100%;
+    background-color: var(--emerald-600);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+#exportBtn:hover:not(:disabled) {
+    background-color: var(--emerald-500);
+}
+
+#exportBtn:disabled {
+    background-color: var(--zinc-800);
+    color: var(--zinc-500);
+    cursor: not-allowed;
+}
+
+#exportBtn svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* ── Preview Section ──────────────────────────────────── */
+.preview-section {
+    flex: 1;
+    background-color: var(--zinc-950);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.preview-grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.2;
+    pointer-events: none;
+    background-image: radial-gradient(var(--zinc-700) 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+
+.preview-inner {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 64rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ── Canvas Wrapper ───────────────────────────────────── */
+.canvas-wrapper {
+    width: 100%;
+    background-color: var(--zinc-900);
+    border: 1px solid var(--zinc-800);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8);
+    position: relative;
+}
+
+.canvas-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(8px);
+    color: var(--zinc-400);
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-family: monospace;
+    z-index: 10;
+}
+
+#canvas {
+    width: 100%;
+    aspect-ratio: 16/9;
+    display: block;
+}
+
+/* transparent checkerboard shown on canvas */
+.transparent-bg {
+    background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h12v12H0V0zm12 12h12v12H12V12z' fill='%2327272a' fill-opacity='0.4'/%3E%3Cpath d='M12 0h12v12H12V0zM0 12h12v12H0V12z' fill='%2318181b' fill-opacity='0.4'/%3E%3C/svg%3E");
+    background-color: #18181b;
+}
+
+/* ── Export Overlay ───────────────────────────────────── */
+#exportOverlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(9,9,11,0.9);
+    backdrop-filter: blur(4px);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+}
+
+#exportOverlay.visible {
+    display: flex;
+}
+
+.export-spinner {
+    color: var(--emerald-500);
+    margin-bottom: 1.5rem;
+}
+
+.export-spinner svg {
+    width: 3rem;
+    height: 3rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.export-title {
+    color: var(--zinc-100);
+    font-weight: 500;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+#exportProgressText {
+    color: var(--zinc-400);
+    font-family: monospace;
+    margin-bottom: 1.5rem;
+}
+
+.export-progress-track {
+    width: 20rem;
+    height: 0.5rem;
+    background-color: var(--zinc-800);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+#exportProgressBar {
+    height: 100%;
+    background-color: var(--emerald-500);
+    transition: width 0.3s ease-out;
+    width: 0%;
+}
+
+#exportFramesText {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--zinc-500);
+}
+
+/* ── Playback Controls ────────────────────────────────── */
+.playback-controls {
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: rgba(24,24,27,0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--zinc-800);
+    padding: 0.5rem;
+    border-radius: var(--radius-full);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.ctrl-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    border-radius: var(--radius-full);
+    background-color: transparent;
+    color: var(--zinc-400);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s, color 0.15s;
+    flex-shrink: 0;
+}
+
+.ctrl-btn:hover {
+    background-color: var(--zinc-800);
+    color: var(--zinc-100);
+}
+
+#playBtn {
+    background-color: var(--zinc-800);
+    color: var(--zinc-100);
+}
+
+#playBtn:hover {
+    background-color: var(--zinc-700);
+}
+
+.ctrl-btn svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+#playIcon svg { margin-left: 2px; }
+
+.hidden { display: none !important; }
+
+.progress-wrap {
+    width: 24rem;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.time-display {
+    color: var(--zinc-400);
+    font-size: 0.875rem;
+    font-family: monospace;
+    width: 4rem;
+    text-align: right;
+    padding-right: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
+}
+
+.time-display svg {
+    width: 0.75rem;
+    height: 0.75rem;
+    flex-shrink: 0;
+}
