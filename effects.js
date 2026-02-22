@@ -153,21 +153,6 @@ export const effects = {
         const scaleY = Math.max(0.01, ease);
         ctx.scale(1, scaleY);
         ctx.fillText(char, 0, fontSize/2);
-    },
-    matrixDrop: (ctx, char, x, y, charProgress, fontSize, width, height, charIndex) => {
-        const ease = 1 - Math.pow(1 - charProgress, 4);
-        ctx.globalAlpha = charProgress;
-        const dropY = -height * (1 - ease);
-        ctx.translate(x, y + dropY);
-        if (charProgress < 1) {
-            ctx.fillStyle = '#00ff41';
-            ctx.filter = `blur(${(1-ease)*5}px)`;
-            const chars = '01';
-            const randomChar = chars[Math.floor(Math.random() * chars.length)];
-            ctx.fillText(randomChar, 0, 0);
-        } else {
-            ctx.fillText(char, 0, 0);
-        }
     }
 };
 
@@ -185,7 +170,6 @@ export const effectNames = {
     neonFlicker: 'Neon Flicker',
     stretchSnap: 'Stretch & Snap',
     foldDown: 'Fold Down',
-    matrixDrop: 'Matrix Drop',
     fade: 'Fade In',
     slideUp: 'Slide Up',
     popIn: 'Pop In',
