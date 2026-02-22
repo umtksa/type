@@ -15,7 +15,7 @@ let state = {
     textColor: '#ffffff',
     bgColor: '#09090b',
     isTransparentBg: true,
-    textAlign: 'left',
+    textAlign: 'center',
     fontFamily: 'Inter',
     progress: 0,
     isPlaying: true,
