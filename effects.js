@@ -70,16 +70,6 @@ export const effects = {
         ctx.filter = `blur(${(1-ease)*8}px)`;
         ctx.fillText(char, currentX, y);
     },
-    scramble: (ctx, char, x, y, charProgress, fontSize, width, height, charIndex) => {
-        ctx.globalAlpha = charProgress > 0 ? 1 : 0;
-        if (charProgress < 1) {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
-            const randomChar = chars[Math.floor(Math.random() * chars.length)];
-            ctx.fillText(randomChar, x, y);
-        } else {
-            ctx.fillText(char, x, y);
-        }
-    },
     swing: (ctx, char, x, y, charProgress, fontSize, width, height, charIndex) => {
         const ease = 1 - Math.pow(1 - charProgress, 3);
         ctx.globalAlpha = charProgress;
@@ -161,7 +151,6 @@ export const effectNames = {
     elasticDrop: 'Elastic Drop',
     rotateIn: 'Spin & Scale',
     trackingIn: 'Cinematic Tracking',
-    scramble: 'Hacker Scramble',
     swing: 'Hinge Swing',
     focusBlur: 'Focus Pull',
     wave: 'Sine Wave',
