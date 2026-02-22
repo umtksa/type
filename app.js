@@ -13,6 +13,7 @@ let state = {
     textColor: '#ffffff',
     bgColor: '#09090b',
     isTransparentBg: true,
+    textAlign: 'left',
     progress: 0,
     isPlaying: true,
     isExporting: false,
@@ -26,8 +27,6 @@ const els = {
     effect: document.getElementById('effectInput'),
     duration: document.getElementById('durationInput'),
     durationVal: document.getElementById('durationVal'),
-    fps: document.getElementById('fpsInput'),
-    fpsVal: document.getElementById('fpsVal'),
     fontSize: document.getElementById('fontSizeInput'),
     fontSizeVal: document.getElementById('fontSizeVal'),
     playBtn: document.getElementById('playBtn'),
@@ -41,11 +40,24 @@ const els = {
     exportOverlay: document.getElementById('exportOverlay'),
     exportProgressText: document.getElementById('exportProgressText'),
     exportProgressBar: document.getElementById('exportProgressBar'),
-    exportFramesText: document.getElementById('exportFramesText')
+    exportFramesText: document.getElementById('exportFramesText'),
+    alignBtns: document.querySelectorAll('.align-btn')
 };
 
+// Build a map of exact character x positions using an offscreen canvas
+// so kerning is 100% handled by the browser's text engine.
+function buildCharPositions(ctx, line) {
+    const positions = [];
+    for (let i = 0; i < line.length; i++) {
+        const xStart = ctx.measureText(line.substring(0, i)).width;
+        const xEnd   = ctx.measureText(line.substring(0, i + 1)).width;
+        positions.push({ xStart, xEnd, width: xEnd - xStart });
+    }
+    return positions;
+}
+
 // renderFrame function
-const renderFrame = (ctx, progress, text, width, height, effect, fontSize, textColor, bgColor, isTransparentBg) => {
+const renderFrame = (ctx, progress, text, width, height, effect, fontSize, textColor, bgColor, isTransparentBg, textAlign) => {
     if (isTransparentBg) {
         ctx.clearRect(0, 0, width, height);
     } else {
@@ -55,7 +67,7 @@ const renderFrame = (ctx, progress, text, width, height, effect, fontSize, textC
 
     ctx.font = `bold ${fontSize}px "Inter", sans-serif`;
     ctx.textBaseline = 'middle';
-    ctx.textAlign = 'center';
+    ctx.textAlign = 'center'; // effects receive center x of each char
 
     const lines = text.split('\n');
     const lineHeight = fontSize * 1.2;
@@ -66,16 +78,29 @@ const renderFrame = (ctx, progress, text, width, height, effect, fontSize, textC
     for (const line of lines) totalChars += line.length;
 
     let charIndex = 0;
+    const edgePadding = fontSize;
 
     for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
         const line = lines[lineIdx];
         const lineWidth = ctx.measureText(line).width;
-        let startX = (width - lineWidth) / 2;
+
+        let lineStartX;
+        if (textAlign === 'left') {
+            lineStartX = edgePadding;
+        } else if (textAlign === 'right') {
+            lineStartX = width - lineWidth - edgePadding;
+        } else {
+            lineStartX = (width - lineWidth) / 2;
+        }
+
+        // Get kerning-correct positions for every character in this line
+        const charPositions = buildCharPositions(ctx, line);
 
         for (let i = 0; i < line.length; i++) {
             const char = line[i];
-            const charWidth = ctx.measureText(char).width;
-            const x = startX + charWidth / 2;
+            const { xStart, width: charWidth } = charPositions[i];
+            // Center point of this character in canvas space
+            const x = lineStartX + xStart + charWidth / 2;
             const y = startY;
 
             let charProgress = 1;
@@ -92,17 +117,15 @@ const renderFrame = (ctx, progress, text, width, height, effect, fontSize, textC
             if (charProgress > 0) {
                 ctx.save();
                 ctx.fillStyle = textColor;
-                
+
                 if (effects[effect]) {
                     effects[effect](ctx, char, x, y, charProgress, fontSize, width, height, charIndex, textColor, progress);
                 } else {
-                    // Fallback to fade if effect not found
                     effects.fade(ctx, char, x, y, charProgress, fontSize, width, height, charIndex, textColor, progress);
                 }
                 ctx.restore();
             }
 
-            startX += charWidth;
             charIndex++;
         }
         startY += lineHeight;
@@ -127,13 +150,13 @@ function animate(time) {
 
 function draw() {
     const ctx = els.canvas.getContext('2d');
-    renderFrame(ctx, state.progress, state.text, els.canvas.width, els.canvas.height, state.effect, state.fontSize, state.textColor, state.bgColor, state.isTransparentBg);
+    renderFrame(ctx, state.progress, state.text, els.canvas.width, els.canvas.height, state.effect, state.fontSize, state.textColor, state.bgColor, state.isTransparentBg, state.textAlign);
 }
 
 function updateUI() {
     els.progress.value = state.progress;
     els.timeVal.textContent = (state.progress * state.duration).toFixed(1) + 's';
-    
+
     if (state.isPlaying) {
         els.playIcon.classList.add('hidden');
         els.pauseIcon.classList.remove('hidden');
@@ -147,8 +170,16 @@ function updateUI() {
 els.text.addEventListener('input', e => { state.text = e.target.value; draw(); });
 els.effect.addEventListener('change', e => { state.effect = e.target.value; draw(); });
 els.duration.addEventListener('input', e => { state.duration = Number(e.target.value); els.durationVal.textContent = state.duration + 's'; updateUI(); });
-els.fps.addEventListener('input', e => { state.fps = Number(e.target.value); els.fpsVal.textContent = state.fps; });
 els.fontSize.addEventListener('input', e => { state.fontSize = Number(e.target.value); els.fontSizeVal.textContent = state.fontSize + 'px'; draw(); });
+
+els.alignBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        els.alignBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.textAlign = btn.dataset.align;
+        draw();
+    });
+});
 
 els.playBtn.addEventListener('click', () => { state.isPlaying = !state.isPlaying; updateUI(); });
 els.resetBtn.addEventListener('click', () => { state.progress = 0; state.isPlaying = true; updateUI(); draw(); });
@@ -159,24 +190,24 @@ els.exportBtn.addEventListener('click', async () => {
     state.isPlaying = false;
     state.exportProgress = 0;
     updateUI();
-    
+
     els.exportBtn.disabled = true;
     els.exportBtnText.textContent = 'Exporting...';
     els.exportOverlay.classList.add('visible');
     els.exportFramesText.textContent = `Generating ${Math.floor(state.duration * state.fps)} frames...`;
-    
+
     const zip = new JSZip();
     const totalFrames = Math.floor(state.duration * state.fps);
     const ctx = els.canvas.getContext('2d');
     const baseName = state.text.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
-    
+
     for (let i = 0; i <= totalFrames; i++) {
         const t = i / totalFrames;
-        renderFrame(ctx, t, state.text, els.canvas.width, els.canvas.height, state.effect, state.fontSize, state.textColor, state.bgColor, state.isTransparentBg);
+        renderFrame(ctx, t, state.text, els.canvas.width, els.canvas.height, state.effect, state.fontSize, state.textColor, state.bgColor, state.isTransparentBg, state.textAlign);
         const dataUrl = els.canvas.toDataURL('image/png');
         const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
         zip.file(`${baseName} ${String(i).padStart(4, '0')}.png`, base64Data, {base64: true});
-        
+
         if (i % 5 === 0) {
             state.exportProgress = Math.round((i / totalFrames) * 100);
             els.exportProgressText.textContent = state.exportProgress + '%';
@@ -184,22 +215,21 @@ els.exportBtn.addEventListener('click', async () => {
             await new Promise(resolve => setTimeout(resolve, 0));
         }
     }
-    
+
     state.exportProgress = 100;
     els.exportProgressText.textContent = '100%';
     els.exportProgressBar.style.width = '100%';
-    
+
     const content = await zip.generateAsync({type: "blob"});
     saveAs(content, `${baseName}.zip`);
-    
+
     state.isExporting = false;
     els.exportBtn.disabled = false;
-    els.exportBtnText.textContent = 'Export Sequence';
+    els.exportBtnText.textContent = 'Export';
     els.exportOverlay.classList.remove('visible');
 });
 
 // Init
-// Populate effect select
 Object.keys(effects).forEach(effectKey => {
     const option = document.createElement('option');
     option.value = effectKey;
@@ -210,7 +240,6 @@ Object.keys(effects).forEach(effectKey => {
 els.text.value = state.text;
 els.effect.value = state.effect;
 els.duration.value = state.duration;
-els.fps.value = state.fps;
 els.fontSize.value = state.fontSize;
 els.canvas.classList.add('transparent-bg');
 els.canvas.style.backgroundColor = '';

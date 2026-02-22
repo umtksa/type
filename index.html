@@ -3,14 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>type sequence</title>
+    <title>KineticType - Static Generator</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <!-- JSZip for exporting ZIP files -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <!-- FileSaver for downloading files -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
@@ -37,13 +34,6 @@
                     </div>
                     <input id="durationInput" type="range" min="0.5" max="10" step="0.5" value="2" />
                 </div>
-                <div>
-                    <div class="field-row">
-                        <label for="fpsInput">Export FPS</label>
-                        <span id="fpsVal" class="field-val">30</span>
-                    </div>
-                    <input id="fpsInput" type="range" min="12" max="60" step="1" value="30" />
-                </div>
             </div>
 
             <div class="sidebar-group">
@@ -53,6 +43,20 @@
                         <span id="fontSizeVal" class="field-val">160px</span>
                     </div>
                     <input id="fontSizeInput" type="range" min="24" max="300" step="2" value="160" />
+                </div>
+                <div>
+                    <label class="field-label">Text Align</label>
+                    <div class="align-btns">
+                        <button class="align-btn active" data-align="left">
+                            <i data-lucide="align-left"></i>
+                        </button>
+                        <button class="align-btn" data-align="center">
+                            <i data-lucide="align-center"></i>
+                        </button>
+                        <button class="align-btn" data-align="right">
+                            <i data-lucide="align-right"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
