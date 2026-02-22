@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KineticType - Static Generator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- JSZip for exporting ZIP files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- FileSaver for downloading files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- GSAP (Recommended Animation Library) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .transparent-bg {
+            background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h12v12H0V0zm12 12h12v12H12V12z' fill='%2327272a' fill-opacity='0.4'/%3E%3Cpath d='M12 0h12v12H12V0zM0 12h12v12H0V12z' fill='%2318181b' fill-opacity='0.4'/%3E%3C/svg%3E");
+            background-color: #18181b;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col">
+    <header class="border-b border-zinc-800 p-4 flex justify-between items-center bg-zinc-950 z-10">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+                <i data-lucide="type" class="text-zinc-950 w-4 h-4"></i>
+            </div>
+            <h1 class="text-xl font-bold tracking-tight">KineticType</h1>
+        </div>
+        <button id="exportBtn" class="bg-emerald-600 hover:bg-emerald-500 disabled:bg-zinc-800 disabled:text-zinc-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition-colors">
+            <i data-lucide="download" class="w-4 h-4"></i> <span id="exportBtnText">Export Sequence</span>
+        </button>
+    </header>
+    
+    <main class="flex-1 flex overflow-hidden">
+        <aside class="w-80 border-r border-zinc-800 bg-zinc-900/30 p-6 overflow-y-auto flex flex-col gap-8">
+            <div class="space-y-6">
+                <div class="flex items-center gap-2 text-zinc-100 font-medium pb-2 border-b border-zinc-800">
+                    <i data-lucide="type" class="text-emerald-500 w-4 h-4"></i> Content
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-zinc-400 mb-2 uppercase tracking-wider">Text</label>
+                    <textarea id="textInput" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-zinc-100 focus:outline-none focus:border-emerald-500 resize-none h-32 font-medium"></textarea>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="flex items-center gap-2 text-zinc-100 font-medium pb-2 border-b border-zinc-800">
+                    <i data-lucide="settings-2" class="text-emerald-500 w-4 h-4"></i> Animation
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-zinc-400 mb-2 uppercase tracking-wider">Effect</label>
+                    <select id="effectInput" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-zinc-100 focus:outline-none focus:border-emerald-500 appearance-none">
+                        <!-- Options will be populated by JS -->
+                    </select>
+                </div>
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-xs font-medium text-zinc-400 uppercase tracking-wider">Duration</label>
+                        <span id="durationVal" class="text-xs text-zinc-500 font-mono">2s</span>
+                    </div>
+                    <input id="durationInput" type="range" min="0.5" max="10" step="0.5" value="2" class="w-full accent-emerald-500" />
+                </div>
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-xs font-medium text-zinc-400 uppercase tracking-wider">Export FPS</label>
+                        <span id="fpsVal" class="text-xs text-zinc-500 font-mono">30</span>
+                    </div>
+                    <input id="fpsInput" type="range" min="12" max="60" step="1" value="30" class="w-full accent-emerald-500" />
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="flex items-center gap-2 text-zinc-100 font-medium pb-2 border-b border-zinc-800">
+                    <i data-lucide="palette" class="text-emerald-500 w-4 h-4"></i> Styling
+                </div>
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-xs font-medium text-zinc-400 uppercase tracking-wider">Font Size</label>
+                        <span id="fontSizeVal" class="text-xs text-zinc-500 font-mono">160px</span>
+                    </div>
+                    <input id="fontSizeInput" type="range" min="24" max="300" step="2" value="160" class="w-full accent-emerald-500" />
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <label class="block text-xs font-medium text-zinc-400 mb-2 uppercase tracking-wider">Text</label>
+                        <div class="flex items-center gap-2 bg-zinc-950 border border-zinc-800 rounded-lg p-1">
+                            <input id="textColorInput" type="color" value="#ffffff" class="w-8 h-8 rounded cursor-pointer bg-transparent border-0 p-0" />
+                            <span id="textColorVal" class="text-xs text-zinc-400 font-mono uppercase">#ffffff</span>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-xs font-medium text-zinc-400 mb-2 uppercase tracking-wider">Background</label>
+                        <div id="bgColorContainer" class="flex items-center gap-2 bg-zinc-950 border border-zinc-800 rounded-lg p-1">
+                            <input id="bgColorInput" type="color" value="#09090b" class="w-8 h-8 rounded cursor-pointer bg-transparent border-0 p-0" />
+                            <span id="bgColorVal" class="text-xs text-zinc-400 font-mono uppercase">#09090b</span>
+                        </div>
+                        <label class="flex items-center gap-2 mt-3 cursor-pointer">
+                            <input id="transparentInput" type="checkbox" class="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-zinc-950" />
+                            <span class="text-xs text-zinc-400 font-medium">Transparent</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <section class="flex-1 bg-zinc-950 flex flex-col items-center justify-center p-8 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(#3f3f46 1px, transparent 1px); background-size: 24px 24px;"></div>
+            
+            <div class="relative z-10 w-full max-w-5xl flex flex-col items-center">
+                <div class="w-full bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl relative">
+                    <div class="absolute top-4 left-4 bg-black/50 backdrop-blur-md text-zinc-400 text-xs px-2 py-1 rounded font-mono z-10">
+                        1920 × 1080
+                    </div>
+                    <canvas id="canvas" width="1920" height="1080" class="w-full aspect-video block" style="background-color: black;"></canvas>
+                    
+                    <div id="exportOverlay" class="absolute inset-0 bg-zinc-950/90 backdrop-blur-sm hidden flex-col items-center justify-center z-20">
+                        <div class="text-emerald-500 mb-6">
+                            <svg class="animate-spin h-12 w-12" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
+                        <div class="text-zinc-100 font-medium text-xl mb-2">Rendering Sequence</div>
+                        <div id="exportProgressText" class="text-zinc-400 font-mono mb-6">0%</div>
+                        <div class="w-80 h-2 bg-zinc-800 rounded-full overflow-hidden">
+                            <div id="exportProgressBar" class="h-full bg-emerald-500 transition-all duration-300 ease-out" style="width: 0%"></div>
+                        </div>
+                        <div id="exportFramesText" class="mt-4 text-xs text-zinc-500">Generating frames...</div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex items-center gap-4 bg-zinc-900/80 backdrop-blur-md border border-zinc-800 p-2 rounded-full shadow-lg">
+                    <button id="playBtn" class="p-3 bg-zinc-800 hover:bg-zinc-700 rounded-full text-zinc-100 transition-colors flex items-center justify-center w-10 h-10">
+                        <i id="playIcon" data-lucide="play" class="w-4 h-4 ml-0.5 hidden"></i>
+                        <i id="pauseIcon" data-lucide="pause" class="w-4 h-4"></i>
+                    </button>
+                    <button id="resetBtn" class="p-3 hover:bg-zinc-800 rounded-full text-zinc-400 hover:text-zinc-100 transition-colors flex items-center justify-center w-10 h-10">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    </button>
+                    <div class="w-96 px-4 flex items-center">
+                        <input id="progressInput" type="range" min="0" max="1" step="0.001" value="0" class="w-full accent-emerald-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer" />
+                    </div>
+                    <div class="text-zinc-400 text-sm font-mono w-16 text-right pr-4 flex items-center gap-1">
+                        <i data-lucide="clock" class="w-3 h-3"></i>
+                        <span id="timeVal">0.0s</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
