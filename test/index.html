@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KineticType - Static Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <main>
+        <aside>
+            <div class="sidebar-group">
+                <div>
+                    <label class="field-label" for="textInput">Text</label>
+                    <textarea id="textInput"></textarea>
+                </div>
+            </div>
+
+            <div class="sidebar-group">
+                <div>
+                    <label class="field-label" for="effectInput">Effect</label>
+                    <select id="effectInput"></select>
+                </div>
+            </div>
+
+            <div class="sidebar-group">
+                <div>
+                    <div class="field-row">
+                        <label for="fontSizeInput">Font Size</label>
+                        <span id="fontSizeVal" class="field-val">160px</span>
+                    </div>
+                    <input id="fontSizeInput" type="range" min="24" max="300" step="2" value="160" />
+                </div>
+                <div>
+                    <div class="field-row">
+                        <label for="letterSpacingInput">Letter Spacing</label>
+                        <span id="letterSpacingVal" class="field-val">0px</span>
+                    </div>
+                    <input id="letterSpacingInput" type="range" min="-20" max="100" step="1" value="0" />
+                </div>
+                <div>
+                    <div class="field-row">
+                        <label for="lineSpacingInput">Line Spacing</label>
+                        <span id="lineSpacingVal" class="field-val">1.2</span>
+                    </div>
+                    <input id="lineSpacingInput" type="range" min="0.5" max="3" step="0.05" value="1.2" />
+                </div>
+                <div>
+                    <label class="field-label">Text Align</label>
+                    <div class="align-btns">
+                        <button class="align-btn active" data-align="left">
+                            <i data-lucide="align-left"></i>
+                        </button>
+                        <button class="align-btn" data-align="center">
+                            <i data-lucide="align-center"></i>
+                        </button>
+                        <button class="align-btn" data-align="right">
+                            <i data-lucide="align-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="field-label">Font</label>
+                    <label class="font-upload-btn" for="fontFileInput">
+                        <i data-lucide="type"></i>
+                        <span id="fontFileName">Upload TTF / OTF</span>
+                    </label>
+                    <input id="fontFileInput" type="file" accept=".ttf,.otf,.woff,.woff2" />
+                </div>
+            </div>
+
+            <div class="sidebar-export">
+                <button id="exportBtn">
+                    <i data-lucide="download"></i>
+                    <span id="exportBtnText">Export</span>
+                </button>
+            </div>
+        </aside>
+
+        <section class="preview-section">
+            <div class="preview-grid"></div>
+
+            <div class="preview-inner">
+                <div class="canvas-wrapper">
+                    <canvas id="canvas" width="1920" height="1080"></canvas>
+
+                    <div id="exportOverlay">
+                        <div class="export-spinner">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle style="opacity:0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path style="opacity:0.75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
+                        <div class="export-title">Rendering Sequence</div>
+                        <div id="exportProgressText">0%</div>
+                        <div class="export-progress-track">
+                            <div id="exportProgressBar"></div>
+                        </div>
+                        <div id="exportFramesText">Generating frames...</div>
+                    </div>
+                </div>
+
+                <div class="playback-controls">
+                    <button id="playBtn" class="ctrl-btn">
+                        <i id="playIcon" data-lucide="play" class="hidden"></i>
+                        <i id="pauseIcon" data-lucide="pause"></i>
+                    </button>
+                    <div class="progress-wrap">
+                        <input id="progressInput" type="range" min="0" max="1" step="0.001" value="0" />
+                    </div>
+                    <div class="duration-control">
+                        <input id="durationInput" type="range" min="0.5" max="10" step="0.5" value="2" />
+                        <span id="durationVal" class="field-val">2s</span>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
