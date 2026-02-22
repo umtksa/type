@@ -40,7 +40,6 @@ const els = {
     playIcon: document.getElementById('playIcon'),
     pauseIcon: document.getElementById('pauseIcon'),
     progress: document.getElementById('progressInput'),
-    timeVal: document.getElementById('timeVal'),
     exportBtn: document.getElementById('exportBtn'),
     exportBtnText: document.getElementById('exportBtnText'),
     exportOverlay: document.getElementById('exportOverlay'),
@@ -165,7 +164,6 @@ function draw() {
 
 function updateUI() {
     els.progress.value = state.progress;
-    els.timeVal.textContent = (state.progress * state.duration).toFixed(1) + 's';
 
     if (state.isPlaying) {
         els.playIcon.classList.add('hidden');

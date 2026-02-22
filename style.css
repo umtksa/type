@@ -464,15 +464,6 @@ input[type="range"] {
     align-items: center;
     gap: 0.4rem;
     padding: 0 0.5rem;
-    border-left: 1px solid var(--zinc-800);
-    border-right: 1px solid var(--zinc-800);
-}
-
-.duration-control svg {
-    width: 0.75rem;
-    height: 0.75rem;
-    color: var(--zinc-500);
-    flex-shrink: 0;
 }
 
 .duration-control input[type="range"] {
