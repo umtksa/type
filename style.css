@@ -412,3 +412,48 @@ input[type="range"] {
     border-color: var(--emerald-500);
     color: var(--emerald-500);
 }
+
+/* ── Font Upload ──────────────────────────────────────── */
+#fontFileInput {
+    display: none;
+}
+
+.font-upload-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    background-color: var(--zinc-950);
+    border: 1px dashed var(--zinc-700);
+    border-radius: var(--radius-lg);
+    padding: 0.6rem 0.75rem;
+    color: var(--zinc-400);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+    overflow: hidden;
+}
+
+.font-upload-btn:hover {
+    border-color: var(--emerald-500);
+    color: var(--zinc-100);
+}
+
+.font-upload-btn.loaded {
+    border-style: solid;
+    border-color: var(--emerald-500);
+    color: var(--emerald-500);
+}
+
+.font-upload-btn svg {
+    width: 0.875rem;
+    height: 0.875rem;
+    flex-shrink: 0;
+}
+
+#fontFileName {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

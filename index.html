@@ -23,9 +23,7 @@
             <div class="sidebar-group">
                 <div>
                     <label class="field-label" for="effectInput">Effect</label>
-                    <select id="effectInput">
-                        <!-- Options populated by JS -->
-                    </select>
+                    <select id="effectInput"></select>
                 </div>
                 <div>
                     <div class="field-row">
@@ -45,6 +43,13 @@
                     <input id="fontSizeInput" type="range" min="24" max="300" step="2" value="160" />
                 </div>
                 <div>
+                    <div class="field-row">
+                        <label for="lineSpacingInput">Line Spacing</label>
+                        <span id="lineSpacingVal" class="field-val">1.2</span>
+                    </div>
+                    <input id="lineSpacingInput" type="range" min="0.5" max="3" step="0.05" value="1.2" />
+                </div>
+                <div>
                     <label class="field-label">Text Align</label>
                     <div class="align-btns">
                         <button class="align-btn active" data-align="left">
@@ -57,6 +62,14 @@
                             <i data-lucide="align-right"></i>
                         </button>
                     </div>
+                </div>
+                <div>
+                    <label class="field-label">Font</label>
+                    <label class="font-upload-btn" for="fontFileInput">
+                        <i data-lucide="type"></i>
+                        <span id="fontFileName">Upload TTF / OTF</span>
+                    </label>
+                    <input id="fontFileInput" type="file" accept=".ttf,.otf,.woff,.woff2" />
                 </div>
             </div>
 
