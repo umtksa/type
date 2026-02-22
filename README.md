@@ -1,0 +1,3 @@
+- [ ] background shapes and animations
+- [ ] save states as json when saving
+- [ ] load states for revisions
