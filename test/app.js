@@ -6,16 +6,16 @@ lucide.createIcons();
 // State
 let state = {
     text: 'HELLO\nWORLD',
-    effect: 'fade',
+    effect: 'trackingIn',
     duration: 2,
     fps: 30,
     fontSize: 160,
     letterSpacing: 0,
-    lineSpacing: 1.2,
+    lineSpacing: 1,
     textColor: '#ffffff',
     bgColor: '#09090b',
     isTransparentBg: true,
-    textAlign: 'left',
+    textAlign: 'center',
     fontFamily: 'Inter',
     progress: 0,
     isPlaying: true,
@@ -273,6 +273,11 @@ els.duration.value = state.duration;
 els.fontSize.value = state.fontSize;
 els.letterSpacing.value = state.letterSpacing;
 els.lineSpacing.value = state.lineSpacing;
+els.letterSpacingVal.textContent = `${state.letterSpacing}px`;
+els.lineSpacingVal.textContent = state.lineSpacing.toFixed(2);
+els.alignBtns.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.align === state.textAlign);
+});
 els.canvas.classList.add('transparent-bg');
 els.canvas.style.backgroundColor = '';
 updateUI();
