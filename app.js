@@ -1,4 +1,4 @@
-import { effects, effectNames } from './effects.js';
+import { effects } from './effects.js';
 
 // Initialize Lucide icons
 lucide.createIcons();
@@ -127,11 +127,8 @@ const renderFrame = (ctx, progress, text, width, height, effect, fontSize, lette
                 ctx.save();
                 ctx.fillStyle = textColor;
 
-                if (effects[effect]) {
-                    effects[effect](ctx, char, x, y, charProgress, fontSize, width, height, charIndex, textColor, progress, i, line.length);
-                } else {
-                    effects.fade(ctx, char, x, y, charProgress, fontSize, width, height, charIndex, textColor, progress, i, line.length);
-                }
+                const selectedEffect = effects[effect]?.render || effects.fade.render;
+                selectedEffect(ctx, char, x, y, charProgress, fontSize, width, height, charIndex, textColor, progress, i, line.length);
                 ctx.restore();
             }
 
@@ -260,10 +257,12 @@ els.exportBtn.addEventListener('click', async () => {
 });
 
 // Init
-Object.keys(effects).forEach(effectKey => {
+Object.entries(effects)
+    .sort(([, a], [, b]) => (a.name || '').localeCompare(b.name || '', 'tr', { sensitivity: 'base' }))
+    .forEach(([effectKey, effectDef]) => {
     const option = document.createElement('option');
     option.value = effectKey;
-    option.textContent = effectNames[effectKey] || effectKey;
+    option.textContent = effectDef.name || effectKey;
     els.effect.appendChild(option);
 });
 
