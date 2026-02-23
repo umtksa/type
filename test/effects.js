@@ -143,6 +143,18 @@ export const effects = {
         const scaleY = Math.max(0.01, ease);
         ctx.scale(1, scaleY);
         ctx.fillText(char, 0, fontSize/2);
+    },
+    increaseTracking: (ctx, char, x, y, charProgress, fontSize, width, height, charIndex, textColor, progress, charInLine, lineLength) => {
+        const fadePhase = Math.min(1, charProgress / 0.9);
+        const trackingPhase = Math.max(0, Math.min(1, progress));
+        const easeTracking = 1 - Math.pow(1 - trackingPhase, 3);
+        const centerIndex = (lineLength - 1) / 2;
+        const distFromCenter = charInLine - centerIndex;
+        const maxTrackingPerStep = fontSize * 0.14;
+        const xOffset = distFromCenter * maxTrackingPerStep * easeTracking;
+
+        ctx.globalAlpha = fadePhase;
+        ctx.fillText(char, x + xOffset, y);
     }
 };
 
@@ -159,6 +171,7 @@ export const effectNames = {
     neonFlicker: 'Neon Flicker',
     stretchSnap: 'Stretch & Snap',
     foldDown: 'Fold Down',
+    increaseTracking: 'Increase Tracking',
     fade: 'Fade In',
     slideUp: 'Slide Up',
     popIn: 'Pop In',

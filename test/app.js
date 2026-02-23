@@ -128,9 +128,9 @@ const renderFrame = (ctx, progress, text, width, height, effect, fontSize, lette
                 ctx.fillStyle = textColor;
 
                 if (effects[effect]) {
-                    effects[effect](ctx, char, x, y, charProgress, fontSize, width, height, charIndex, textColor, progress);
+                    effects[effect](ctx, char, x, y, charProgress, fontSize, width, height, charIndex, textColor, progress, i, line.length);
                 } else {
-                    effects.fade(ctx, char, x, y, charProgress, fontSize, width, height, charIndex, textColor, progress);
+                    effects.fade(ctx, char, x, y, charProgress, fontSize, width, height, charIndex, textColor, progress, i, line.length);
                 }
                 ctx.restore();
             }
